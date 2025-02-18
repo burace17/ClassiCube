@@ -45,16 +45,16 @@ cc_bool Platform_SingleProcess = true;
 // On PPC these are implemented using function calls
 #if TARGET_CPU_68K
 	#define MAC_SYSAPI(_type) static _type
-    #define MAC_ONEWORDINLINE(w1)           = w1
-    #define MAC_TWOWORDINLINE(w1,w2)        = {w1, w2}
-    #define MAC_THREEWORDINLINE(w1,w2,w3)   = {w1, w2, w3}
-    #define MAC_FOURWORDINLINE(w1,w2,w3,w4) = {w1, w2, w3, w4}
+	#define MAC_ONEWORDINLINE(w1)           = w1
+	#define MAC_TWOWORDINLINE(w1,w2)        = {w1, w2}
+	#define MAC_THREEWORDINLINE(w1,w2,w3)   = {w1, w2, w3}
+	#define MAC_FOURWORDINLINE(w1,w2,w3,w4) = {w1, w2, w3, w4}
 #else
 	#define MAC_SYSAPI(_type) extern pascal _type
-    #define MAC_ONEWORDINLINE(w1)
-    #define MAC_TWOWORDINLINE(w1,w2)
-    #define MAC_THREEWORDINLINE(w1,w2,w3)
-    #define MAC_FOURWORDINLINE(w1,w2,w3,w4)
+	#define MAC_ONEWORDINLINE(w1)
+	#define MAC_TWOWORDINLINE(w1,w2)
+	#define MAC_THREEWORDINLINE(w1,w2,w3)
+	#define MAC_FOURWORDINLINE(w1,w2,w3,w4)
 #endif
 typedef unsigned long MAC_FourCharCode;
 static const int MAC_smSystemScript = -1;
@@ -115,8 +115,8 @@ void Platform_Log(const char* msg, int len) {
 #define EPOCH_ADJUSTMENT 2082866400UL
 
 static time_t gettod(void) {
-    unsigned long secs;
-    GetDateTime(&secs);
+	unsigned long secs;
+	GetDateTime(&secs);
 	return secs - EPOCH_ADJUSTMENT;
 }
 
@@ -206,7 +206,7 @@ void Platform_EncodePath(cc_filepath* dst, const cc_string* path) {
 }
 
 static int DoOpenDF(const char* name, char perm, cc_file* file) {
-    HParamBlockRec pb;
+	HParamBlockRec pb;
 	Mem_Set(&pb, 0, sizeof(pb));
 
 	pb.fileParam.ioVRefNum = wd_refNum;
@@ -220,25 +220,25 @@ static int DoOpenDF(const char* name, char perm, cc_file* file) {
 }
 
 static int DoCreateFile(const char* name) {
-    HParamBlockRec pb;
+	HParamBlockRec pb;
 	Mem_Set(&pb, 0, sizeof(pb));
 
 	pb.fileParam.ioVRefNum = wd_refNum;
 	pb.fileParam.ioDirID   = wd_dirID;
 	pb.fileParam.ioNamePtr = name;
 
-    return PBHCreateSync(&pb);
+	return PBHCreateSync(&pb);
 }
 
 static int DoCreateFolder(const char* name) {
-    HParamBlockRec pb;
+	HParamBlockRec pb;
 	Mem_Set(&pb, 0, sizeof(pb));
 
 	pb.fileParam.ioVRefNum = wd_refNum;
 	pb.fileParam.ioDirID   = wd_dirID;
 	pb.fileParam.ioNamePtr = name;
 
-    return PBDirCreateSync(&pb);
+	return PBDirCreateSync(&pb);
 }
 
 
@@ -465,7 +465,7 @@ cc_result Process_StartGame2(const cc_string* args, int numArgs) {
 
 void Process_Exit(cc_result code) { 
 	ExitToShell();
-    for(;;) { }
+	for(;;) { }
 }
 
 cc_result Process_StartOpen(const cc_string* args) {

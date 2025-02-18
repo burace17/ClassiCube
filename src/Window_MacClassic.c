@@ -103,16 +103,16 @@ void Console_Write(const char* msg, int len) {
 // On PPC these are implemented using function calls
 #if TARGET_CPU_68K
 	#define MAC_SYSAPI(_type) static _type
-    #define MAC_ONEWORDINLINE(w1)           = w1
-    #define MAC_TWOWORDINLINE(w1,w2)        = {w1, w2}
-    #define MAC_THREEWORDINLINE(w1,w2,w3)   = {w1, w2, w3}
-    #define MAC_FOURWORDINLINE(w1,w2,w3,w4) = {w1, w2, w3, w4}
+	#define MAC_ONEWORDINLINE(w1)           = w1
+	#define MAC_TWOWORDINLINE(w1,w2)        = {w1, w2}
+	#define MAC_THREEWORDINLINE(w1,w2,w3)   = {w1, w2, w3}
+	#define MAC_FOURWORDINLINE(w1,w2,w3,w4) = {w1, w2, w3, w4}
 #else
 	#define MAC_SYSAPI(_type) extern pascal _type
-    #define MAC_ONEWORDINLINE(w1)
-    #define MAC_TWOWORDINLINE(w1,w2)
-    #define MAC_THREEWORDINLINE(w1,w2,w3)
-    #define MAC_FOURWORDINLINE(w1,w2,w3,w4)
+	#define MAC_ONEWORDINLINE(w1)
+	#define MAC_TWOWORDINLINE(w1,w2)
+	#define MAC_THREEWORDINLINE(w1,w2,w3)
+	#define MAC_FOURWORDINLINE(w1,w2,w3,w4)
 #endif
 typedef unsigned long MAC_FourCharCode;
 typedef SInt16 MAC_WindowPartCode;
@@ -163,9 +163,9 @@ void Window_PreInit(void) {
 	FlushEvents(everyEvent, 0);
 	SetEventMask(everyEvent);
 
-    long tmpLong = 0;
-    Gestalt(gestaltQuickdrawVersion, &tmpLong);
-    hasColorQD = tmpLong >= gestalt32BitQD;
+	long tmpLong = 0;
+	Gestalt(gestaltQuickdrawVersion, &tmpLong);
+	hasColorQD = tmpLong >= gestalt32BitQD;
 	DisplayInfo.CursorVisible = true;
 }
 
@@ -186,11 +186,11 @@ static void DoCreateWindow(int width, int height) {
 	if (Window_Main.Exists) return;
 
 	Rect r = qd.screenBits.bounds;
-    r.top += 40;
-    InsetRect(&r, 100, 100);
+	r.top += 40;
+	InsetRect(&r, 100, 100);
 
 	if (hasColorQD) {
-    	win = NewCWindow(NULL, &r, "\pClassiCube", true, documentProc, (WindowPtr)-1, true, 0);
+		win = NewCWindow(NULL, &r, "\pClassiCube", true, documentProc, (WindowPtr)-1, true, 0);
 	} else {
 		win = NewWindow( NULL, &r, "\pClassiCube", true, documentProc, (WindowPtr)-1, true, 0);
 	}
@@ -230,7 +230,7 @@ void Clipboard_GetText(cc_string* value) {
 	HUnlock(tmp);
 
 	String_AppendAll(value, (char*)tmp, dataSize);
-    DisposeHandle(tmp);
+	DisposeHandle(tmp);
 	// TODO
 }
 
@@ -349,40 +349,40 @@ void Window_ProcessEvents(float delta) {
 
 	while (GetNextEvent(everyEvent, &event)) {
 		switch (event.what)
-        {
-            case mouseDown:
-                HandleMouseDown(&event);
-                break;
-            case mouseUp:
-                HandleMouseUp(&event);
-                break;
-            case keyDown:
-            case autoKey:
-                HandleKeyDown(&event);
-                break;
-            case keyUp:
-                HandleKeyUp(&event);
-                break;
-            case updateEvt:
-                BeginUpdate((WindowPtr)event.message);
-                EndUpdate(  (WindowPtr)event.message);
+		{
+			case mouseDown:
+				HandleMouseDown(&event);
+				break;
+			case mouseUp:
+				HandleMouseUp(&event);
+				break;
+			case keyDown:
+			case autoKey:
+				HandleKeyDown(&event);
+				break;
+			case keyUp:
+				HandleKeyUp(&event);
+				break;
+			case updateEvt:
+				BeginUpdate((WindowPtr)event.message);
+				EndUpdate(  (WindowPtr)event.message);
 				Event_RaiseVoid(&WindowEvents.RedrawNeeded);
-                break;
-            case diskEvt:
-                if ((event.message & 0xFFFF0000) != noErr)
-                {
-                    Point pt = { 100, 100 };
-                    DILoad();
-                    DIBadMount(pt, event.message);
-                    DIUnload();
-                }
-                break;
-            case kHighLevelEvent:
-                AEProcessAppleEvent(&event);
-                break;
-            default:
-                break;
-        }
+				break;
+			case diskEvt:
+				if ((event.message & 0xFFFF0000) != noErr)
+				{
+					Point pt = { 100, 100 };
+					DILoad();
+					DIBadMount(pt, event.message);
+					DIUnload();
+				}
+				break;
+			case kHighLevelEvent:
+				AEProcessAppleEvent(&event);
+				break;
+			default:
+				break;
+		}
 	}
 }
 
@@ -461,7 +461,7 @@ void Window_AllocFramebuffer(struct Bitmap* bmp, int width, int height) {
 }
 
 static void DrawFramebufferBulk(Rect2D r, struct Bitmap* bmp) {
-    GrafPtr thePort = (GrafPtr)win;
+	GrafPtr thePort = (GrafPtr)win;
 	BitMap* memBits = &((GrafPtr)fb_world)->portBits;
 	BitMap* winBits = &thePort->portBits;
 
@@ -471,32 +471,32 @@ static void DrawFramebufferBulk(Rect2D r, struct Bitmap* bmp) {
 	update.top    = r.y;
 	update.bottom = r.y + r.height;
 
-    CopyBits(memBits, winBits, &update, &update, srcCopy, nil);
+	CopyBits(memBits, winBits, &update, &update, srcCopy, nil);
 }
 
 static void DrawFramebufferSlow(Rect2D r, struct Bitmap* bmp) {
-    for (int y = r.y; y < r.y + r.height; ++y) 
+	for (int y = r.y; y < r.y + r.height; ++y) 
 	{
-        BitmapCol* row = Bitmap_GetRow(bmp, y);
-        for (int x = r.x; x < r.x + r.width; ++x) 
+		BitmapCol* row = Bitmap_GetRow(bmp, y);
+		for (int x = r.x; x < r.x + r.width; ++x) 
 		{
-            // TODO optimise
-            BitmapCol	col = row[x];
+			// TODO optimise
+			BitmapCol	col = row[x];
 			cc_uint8 R = BitmapCol_R(col);
 			cc_uint8 G = BitmapCol_G(col);
 			cc_uint8 B = BitmapCol_B(col);
 
-            RGBColor pixelColor;
+			RGBColor pixelColor;
 			pixelColor.red   = R << 8;
 			pixelColor.green = G << 8;
 			pixelColor.blue  = B << 8;
 
-            RGBForeColor(&pixelColor);
-            MoveTo(x, y);
-            Line(0, 0);
+			RGBForeColor(&pixelColor);
+			MoveTo(x, y);
+			Line(0, 0);
 			//SetCPixel(x, y, &pixelColor);
-        }
-    }
+		}
+	}
 }
 
 void Window_DrawFramebuffer(Rect2D r, struct Bitmap* bmp) {
