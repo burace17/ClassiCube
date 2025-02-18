@@ -338,7 +338,8 @@ cc_result File_Length(cc_file file, cc_uint32* len) {
 *--------------------------------------------------------Threading--------------------------------------------------------*
 *#########################################################################################################################*/
 void Thread_Sleep(cc_uint32 milliseconds) {
-	long delay = milliseconds * 1000 / 60;
+	// Delay accepts a value in ticks: one tick is equal to 1/60th of a second (approximately 16.67 milliseconds)
+	long delay = milliseconds / 16.67;
 	long final;
 	Delay(delay, &final);
 }
