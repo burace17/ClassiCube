@@ -32,6 +32,7 @@ static int con_rows, con_cols;
 static int cursorX, cursorY;
 static WindowPtr con_win;
 static Rect con_bounds;
+static GWorldPtr con_buffer;
 
 static void Console_EraseLine(int y) {
 	Rect r   = con_bounds;
@@ -48,9 +49,12 @@ static void Console_Init(void) {
 	InsetRect(&r, 5, 5);  
 
 	con_win = NewWindow(NULL, &r, "\pConsole log", true, 0, (WindowPtr)-1, true, 0);
-	GrafPtr savedPort;
-	GetPort(&savedPort);
-	SetPort(con_win);
+	NewGWorld(&con_buffer, 0, &r, NULL, NULL, 0);
+
+	CGrafPtr savedPort;
+	GDHandle graphicsDevice;
+	GetGWorld(&savedPort, &graphicsDevice);
+	SetGWorld(con_buffer, NULL);
 
 	con_bounds = con_win->portRect;
 	EraseRect(&con_bounds);
@@ -67,7 +71,7 @@ static void Console_Init(void) {
 
 	Console_EraseLine(0);
 	cursorX = cursorY = 0;
-	SetPort(savedPort);
+	SetGWorld(savedPort, graphicsDevice);
 }
 
 static void Console_NewLine(void) {
@@ -77,12 +81,26 @@ static void Console_NewLine(void) {
 	if (cursorY >= con_rows) cursorY = 0;
 }
 
+static void Console_UpdateWindow() {
+	CGrafPtr savedPort;
+	GDHandle graphicsDevice;
+	GetGWorld(&savedPort, &graphicsDevice);
+	SetPort(con_win);
+
+	BitMap* offscreenBits = &((GrafPtr)con_buffer)->portBits;
+	BitMap* winBits = &con_win->portBits;
+	CopyBits(offscreenBits, winBits, &con_bounds, &con_bounds, srcCopy, 0);
+
+	SetGWorld(savedPort, graphicsDevice);
+}
+
 void Console_Write(const char* msg, int len) {
 	if (!con_win) Console_Init();
 
-	GrafPtr savedPort;
-	GetPort(&savedPort);
-	SetPort(con_win);
+	CGrafPtr savedPort;
+	GDHandle graphicsDevice;
+	GetGWorld(&savedPort, &graphicsDevice);
+	SetGWorld(con_buffer, NULL);
 
 	for (int i = 0; i < len; i++) 
 	{
@@ -92,7 +110,8 @@ void Console_Write(const char* msg, int len) {
 	}
 	Console_NewLine();
 
-	SetPort(savedPort);
+	SetGWorld(savedPort, graphicsDevice);
+	Console_UpdateWindow();
 }
 
 
@@ -365,6 +384,7 @@ void Window_ProcessEvents(float delta) {
 				break;
 			case updateEvt:
 				BeginUpdate((WindowPtr)event.message);
+				Console_UpdateWindow();
 				EndUpdate(  (WindowPtr)event.message);
 				Event_RaiseVoid(&WindowEvents.RedrawNeeded);
 				break;
